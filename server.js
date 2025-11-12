@@ -28,9 +28,6 @@ const loggingMiddleware = (req, res, next) => {
   next();
 };
 
-// Глобально застосовуємо middleware для логування
-// Цей рядок має бути ПЕРЕД усіма маршрутами
-
 app.use(loggingMiddleware);
 
 const authMiddleware = (req, res, next) => {
@@ -80,14 +77,39 @@ app.get('/documents', authMiddleware, (req, res) => {
 
 // Маршрут для створення нового документа
 app.post('/documents', authMiddleware, (req, res) => {
+  const { title, content } = req.body;
 
-  const newDocument = req.body;
+  // Перевірка, чи передані всі необхідні поля
 
-  // Імітуємо створення ID
-  newDocument.id = Date.now();
+  if (!title || !content) {
+    return res.status(400).json({ message: 'Bad Request. Fields "title" and "content" are required.' });
+  }
+
+  const newDocument = {
+    id: Date.now(),
+    title,
+    content,
+  };
+
   documents.push(newDocument);
-  // Відповідаємо статусом 201 Created та повертаємо створений об'єкт
   res.status(201).json(newDocument);
+});
+
+app.delete('/documents/:id', authMiddleware, (req, res) => {
+    // Отримуємо id з параметрів маршруту
+    const documentId = parseInt(req.params.id);
+    const documentIndex = documents.findIndex(doc => doc.id === documentId);
+
+    // Якщо документ з таким id не знайдено
+    if (documentIndex === -1) {
+        return res.status(404).json({ message: 'Document not found' });
+    }
+
+    // Видаляємо документ з масиву
+    documents.splice(documentIndex, 1);
+
+    // Відповідаємо статусом 204 No Content, тіло відповіді буде порожнім
+    res.status(204).send();
 });
 
 // Маршрут для отримання списку всіх співробітників
