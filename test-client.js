@@ -27,7 +27,8 @@ const runTests = async () => {
 
     console.log('Status:', response.status);
     console.log('Data:', data);
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('Error:', error.message);
   }
 
@@ -43,7 +44,8 @@ const runTests = async () => {
     const data = await response.json();
     console.log('Status:', response.status); // Очікуємо 403
     console.log('Data:', data);
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('Error:', error.message);
   }
 
@@ -61,7 +63,8 @@ const runTests = async () => {
     console.log('Status:', response.status);
 
     console.log('Data:', data);
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('Error:', error.message);
   }
 

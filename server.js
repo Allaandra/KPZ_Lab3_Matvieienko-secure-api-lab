@@ -10,8 +10,6 @@ const PORT = 3000;
 
 app.use(express.json());
 
-
-
 // --- MIDDLEWARE ---
 const loggingMiddleware = (req, res, next) => {
   // Отримуємо поточний час, HTTP метод та URL запиту
@@ -22,9 +20,7 @@ const loggingMiddleware = (req, res, next) => {
   // Виводимо інформацію в консоль
   console.log(`[${timestamp}] ${method} ${url}`);
 
-  // ВАЖЛИВО: передаємо управління наступному middleware
-  // Якщо не викликати next(), обробка запиту "зависне" на цьому місці
-
+  // Передати наступному(інакше зависне)
   next();
 };
 
@@ -34,22 +30,17 @@ const authMiddleware = (req, res, next) => {
   // Отримуємо дані для входу з заголовків запиту
   const login = req.headers['x-login'];
   const password = req.headers['x-password'];
-  // Шукаємо користувача у нашій "базі даних"
 
+  // Шукаємо користувача у нашій "базі даних"
   const user = users.find(u => u.login === login && u.password === password);
 
-  // Якщо користувача не знайдено, або дані невірні
   if (!user) {
-    // Відповідаємо статусом 401 Unauthorized і припиняємо обробку
     return res.status(401).json({ message: 'Authentication failed. Please provide valid credentials in headers X-Login and X-Password.' });
   }
-
-  // Якщо користувач знайдений, додаємо його дані до об'єкта запиту
-  // Це дозволить наступним обробникам знати, хто надіслав запит
-
+  
   req.user = user;
 
-  // Передаємо управління наступному middleware або основному обробнику маршруту
+  // Передати наступному(інакше зависне)
   next();
 };
 
@@ -57,14 +48,11 @@ const adminOnlyMiddleware = (req, res, next) => {
 
   // Перевіряємо, чи існує об'єкт user і яка в нього роль
   // req.user був доданий на попередньому етапі в authMiddleware
-
   if (!req.user || req.user.role !== 'admin') {
-    // Якщо роль не 'admin', відповідаємо статусом 403 Forbidden
     return res.status(403).json({ message: 'Access denied. Admin role required.' });
-
   }
 
-  // Якщо перевірка пройдена, передаємо управління далі
+  // Передати наступному(інакше зависне)
   next();
 };
 
@@ -80,7 +68,6 @@ app.post('/documents', authMiddleware, (req, res) => {
   const { title, content } = req.body;
 
   // Перевірка, чи передані всі необхідні поля
-
   if (!title || !content) {
     return res.status(400).json({ message: 'Bad Request. Fields "title" and "content" are required.' });
   }
@@ -95,6 +82,7 @@ app.post('/documents', authMiddleware, (req, res) => {
   res.status(201).json(newDocument);
 });
 
+// Маршрут для видалення документа
 app.delete('/documents/:id', authMiddleware, (req, res) => {
     // Отримуємо id з параметрів маршруту
     const documentId = parseInt(req.params.id);
