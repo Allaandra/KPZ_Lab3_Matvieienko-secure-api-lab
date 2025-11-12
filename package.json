@@ -1,0 +1,15 @@
+{
+  "name": "kpz_lab3_matvieienko-secure-api-lab",
+  "version": "1.0.0",
+  "description": "Розробка та тестування захищеного REST API на Node.js та Express",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
