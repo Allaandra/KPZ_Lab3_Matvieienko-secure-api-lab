@@ -4,7 +4,8 @@
   "description": "Розробка та тестування захищеного REST API на Node.js та Express",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "test": "node test-client.js"
   },
   "keywords": [],
   "author": "",
